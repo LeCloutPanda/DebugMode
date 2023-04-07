@@ -38,17 +38,15 @@ namespace DebugMode
         static GameManager gameManager;
         static OptionsController optionsController;
 
-        static PausePage pausePage;
-
-        static GameObject pauseMenu;
-
         static bool debugEnabled;
-
         static void UpdateDebug(bool mode) => SaveConfig(mode);
         static bool debugSettingAdded = false;
         static System.Action<bool> debugSettingChanged = UpdateDebug;
 
-        public override void OnApplicationStart() // Runs after Game Initialization.
+        static string fileName = "config.json";
+        static string configDirectory = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+        public override void OnApplicationStart() 
         {
             MelonLogger.Msg("Called from TestMod");
             HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("dev.panda.debugmode");
@@ -88,7 +86,6 @@ namespace DebugMode
             }
         }
 
-        // Get all required options
         [HarmonyPatch(typeof(CharacterController), nameof(CharacterController.Awake))]
         static class PatchcharacterControllerAwake { static void Postfix(CharacterController __instance) => characterController = __instance; }
 
@@ -101,7 +98,6 @@ namespace DebugMode
         [HarmonyPatch(typeof(OptionsController), nameof(OptionsController.BuildGameplayPage))]
         static class PatchBuildGameplayPage
         {
-            [HarmonyPostfix]
             static void Postfix(OptionsController __instance)
             {
                 optionsController = __instance;
@@ -112,15 +108,7 @@ namespace DebugMode
         }
 
         [HarmonyPatch(typeof(OptionsController), nameof(OptionsController.AddVisibleJoysticks))]
-        static class PatchAddVisibleJoysticks
-        {
-            [HarmonyPostfix]
-            static void Postfix() => debugSettingAdded = false;
-        }
-
-
-        static string fileName = "config.json";
-        static string configDirectory = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, fileName);
+        static class PatchAddVisibleJoysticks { static void Postfix() => debugSettingAdded = false; }
 
         private static void ValidateConfig()
         {
