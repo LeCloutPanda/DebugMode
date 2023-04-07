@@ -30,4 +30,4 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 * M: Toggle max move speed
 
 # License 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
