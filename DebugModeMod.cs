@@ -1,54 +1,55 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.IO;
-
-using MelonLoader;
-using HarmonyLib;
-
-using VampireSurvivors;
-using VampireSurvivors.Objects.Characters;
-using VampireSurvivors.Input;
-using VampireSurvivors.Framework;
-using VampireSurvivors.UI;
-using VampireSurvivors.Objects;
-using VampireSurvivors.Objects.Weapons;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UnityEngine.Events;
-using Il2CppSystem;
-using MelonLoader.TinyJSON;
-using System.Xml.Linq;
+﻿using System.IO;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using static Il2CppSystem.Globalization.CultureInfo;
+using MelonLoader;
+using HarmonyLib;
+using Il2CppVampireSurvivors.UI;
+using Il2CppVampireSurvivors.Input;
+using Il2CppVampireSurvivors.Framework;
+using Il2CppVampireSurvivors.Objects.Characters;
+using UnityEngine;
+using Il2CppVampireSurvivors.Objects.Weapons;
+using Il2CppVampireSurvivors.Objects;
+using Il2CppCom.LuisPedroFonseca.ProCamera2D;
 
 namespace DebugMode
 {
     public class ConfigData
     {
-        public bool DebugEnabled { get; set; }
+        public bool Enabled { get; set; }
     }
 
-    public class DebugModeMod: MelonMod
+    public static class ModInfo
     {
+        public const string Name = "Debug Mode";
+        public const string Description = "Unleash the power of debug mode.";
+        public const string Author = "LeCloutPanda";
+        public const string Company = "Pandas Hell Hole";
+        public const string Version = "1.0.1";
+        public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
+    }
+
+    public class DebugModeMod : MelonMod
+    {
+        static readonly string configFolder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs");
+        static readonly string filePath = Path.Combine(configFolder, "DebugMode.json");
+
+        static readonly string enabledKey = "Enabled";
+        static bool enabled;
+
+        static void UpdateDebug(bool value) => UpdateEnabled(value);
+        static bool debugSettingAdded = false;
+        static System.Action<bool> debugSettingChanged = UpdateDebug;
+
         static CharacterController characterController;
         static GameDebugInputManager debugInputManager;
         static GameManager gameManager;
         static OptionsController optionsController;
 
-        static bool debugEnabled;
-        static void UpdateDebug(bool mode) => SaveConfig(mode);
-        static bool debugSettingAdded = false;
-        static System.Action<bool> debugSettingChanged = UpdateDebug;
-
-        static string fileName = "config.json";
-        static string configDirectory = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-        public override void OnApplicationStart() 
+        public override void OnInitializeMelon()
         {
-            MelonLogger.Msg("Called from TestMod");
+            base.OnInitializeMelon();
+
             HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("dev.panda.debugmode");
             harmony.PatchAll();
 
@@ -59,7 +60,7 @@ namespace DebugMode
         {
             base.OnLateUpdate();
 
-            if (debugEnabled)
+            if (enabled)
             {
                 if (characterController != null && debugInputManager != null && gameManager != null)
                 {
@@ -81,7 +82,7 @@ namespace DebugMode
                     else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana();
                     else if (Input.GetKeyDown(KeyCode.M)) debugInputManager.ToggleMoveSpeed();
 
-                    gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, Com.LuisPedroFonseca.ProCamera2D.EaseType.Linear);
+                    gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
                 }
             }
         }
@@ -101,8 +102,7 @@ namespace DebugMode
             static void Postfix(OptionsController __instance)
             {
                 optionsController = __instance;
-                MelonLogger.Msg("Adding Debug Mode button");
-                if (!debugSettingAdded) optionsController.AddTickBox("Debug Mode", debugEnabled, debugSettingChanged, false);
+                if (!debugSettingAdded) optionsController.AddTickBox("Debug Mode", enabled, debugSettingChanged, false);
                 debugSettingAdded = true;
             }
         }
@@ -110,65 +110,46 @@ namespace DebugMode
         [HarmonyPatch(typeof(OptionsController), nameof(OptionsController.AddVisibleJoysticks))]
         static class PatchAddVisibleJoysticks { static void Postfix() => debugSettingAdded = false; }
 
+
+        private static void UpdateEnabled(bool value)
+        {
+            ModifyConfigValue(enabledKey, value);
+            enabled = value;
+        }
+
         private static void ValidateConfig()
         {
             try
             {
+                if (!Directory.Exists(configFolder)) Directory.CreateDirectory(configFolder);
+                if (!File.Exists(filePath)) File.WriteAllText(filePath, JsonConvert.SerializeObject(new ConfigData { }, Formatting.Indented));
 
-                MelonLogger.Msg("Validating Config file");
-                if (!File.Exists(configDirectory))
-                {
-                    MelonLogger.Msg("Creating Config file");
-                    CreateConfig(configDirectory);
-                }
-                else
-                {
-                    MelonLogger.Msg("Checking Config file for invalid items");
-                    var data = JsonConvert.DeserializeObject<ConfigData>(File.ReadAllText(configDirectory));
-                    if (data.DebugEnabled == null)
-                    {
-                        MelonLogger.Msg("Values are incorrect creating Config file");
-                        CreateConfig(configDirectory);
-                    }
-                    MelonLogger.Msg("Loading Config file");
-                    LoadConfig();
-                    MelonLogger.Msg("Loaded Config file");
-                }
+                LoadConfig();
             }
-            catch (System.Exception ex)
-            {
-                MelonLogger.Msg($"Error: {ex}");
-            }
+            catch (System.Exception ex) { MelonLogger.Msg($"Error: {ex}"); }
         }
 
-        private static void LoadConfig() => debugEnabled = JObject.Parse(File.ReadAllText(configDirectory) ?? "{}").Value<bool>("DebugEnabled");
-
-        private static void SaveConfig(bool newDebugValue)
+        private static void ModifyConfigValue<T>(string key, T value)
         {
-            try
+            string file = File.ReadAllText(filePath);
+            JObject json = JObject.Parse(file);
+
+            if (!json.ContainsKey(key)) json.Add(key, JToken.FromObject(value));
+            else
             {
-                MelonLogger.Msg("Saving Config file");
-                var data = JsonConvert.DeserializeObject<ConfigData>(File.ReadAllText(configDirectory));
-                debugEnabled = data.DebugEnabled = newDebugValue;
-                File.WriteAllText(configDirectory, JsonConvert.SerializeObject(data, Formatting.Indented));
-                MelonLogger.Msg("Saved Config file");
-            }
-            catch(System.Exception ex)
-            {
-                MelonLogger.Msg($"Error: {ex}");
+                System.Type type = typeof(T);
+                JToken newValue = JToken.FromObject(value);
+
+                if (type == typeof(string)) json[key] = newValue.ToString();
+                else if (type == typeof(int)) json[key] = newValue.ToObject<int>();
+                else if (type == typeof(bool)) json[key] = newValue.ToObject<bool>();
+                else { MelonLogger.Msg($"Unsupported type '{type.FullName}'"); return; }
             }
 
+            string finalJson = JsonConvert.SerializeObject(json, Formatting.Indented);
+            File.WriteAllText(filePath, finalJson);
         }
 
-        private static void CreateConfig(string path)
-        {
-            try {
-                File.WriteAllText(path, JsonConvert.SerializeObject(new ConfigData { DebugEnabled = false }, Formatting.Indented));
-            }
-            catch (System.Exception ex)
-            {
-                MelonLogger.Msg($"Error: {ex}");
-            }
-        }
+        private static void LoadConfig() => enabled = JObject.Parse(File.ReadAllText(filePath) ?? "{}").Value<bool>(enabledKey);
     }
 }
