@@ -29,5 +29,8 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 * N: Give the player a Arcana
 * M: Toggle max move speed
 
+# Need to report a bug
+Please report them in the [Issues](https://github.com/LeCloutPanda/DebugMode/issues) section following this [Example Issue](https://github.com/LeCloutPanda/DebugMode/issues/1) as a template
+
 # License 
 Distributed under the MIT License. See `LICENSE` for more information.
