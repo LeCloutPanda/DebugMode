@@ -6,7 +6,7 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 2) Find **Vampire survivors** and open its **Properties**
 3) Go to the **Betas** tab
 4) Type **newenginepls** in the **Beta access code** input and hit enter
-5) Download and install [Melon Loader](https://github.com/LavaGang/MelonLoader) for Vampire Survivors after it updates with the new engine
+5) Download and install [Melon Loader v0.61](https://github.com/LavaGang/MelonLoader/releases/tag/v0.6.1) for Vampire Survivors after it updates with the new engine
 6) Run the game at least once, it may freeze or appear to be frozen give it time to do its thing as it is doing stuff in the background 
 7) Once it's done close the game and download the latest release of [DebugMode](https://github.com/LeCloutPanda/DebugMode/releases/latest/download/DebugMode.dll) and place it into the **Mods** folder
 
