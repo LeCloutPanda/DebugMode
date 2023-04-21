@@ -24,7 +24,7 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 * K: Trigger a Rosary
 * G: Make a max level chest
 * V: Trigger a Vacuum
-* J: Unlock coffin character screen preview(Unimplemented as of now)
+* J: Unlock coffin character screen preview
 * B: Spawn destructibles
 * N: Give the player a Arcana
 * M: Toggle max move speed
