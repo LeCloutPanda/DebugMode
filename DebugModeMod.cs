@@ -11,6 +11,7 @@ using UnityEngine;
 using Il2CppVampireSurvivors.Objects.Weapons;
 using Il2CppVampireSurvivors.Objects;
 using Il2CppCom.LuisPedroFonseca.ProCamera2D;
+using Il2CppVampireSurvivors.Data;
 
 namespace DebugMode
 {
@@ -25,7 +26,7 @@ namespace DebugMode
         public const string Description = "Unleash the power of debug mode.";
         public const string Author = "LeCloutPanda";
         public const string Company = "Pandas Hell Hole";
-        public const string Version = "1.0.1";
+        public const string Version = "1.0.2";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
 
@@ -77,7 +78,7 @@ namespace DebugMode
                     else if (Input.GetKeyDown(KeyCode.K)) debugInputManager.RosaryDamage();
                     else if (Input.GetKeyDown(KeyCode.G)) debugInputManager.MakeTreasure3();
                     else if (Input.GetKeyDown(KeyCode.V)) debugInputManager.Vacuum();
-                    else if (Input.GetKeyDown(KeyCode.J)) MelonLogger.Msg("Need to implement, Unlock coffin character screen preview");
+                    else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.stageName) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(setCharacterPreview(gameManager.Stage.ActiveStageData.stageName));
                     else if (Input.GetKeyDown(KeyCode.B)) debugInputManager.SpawnDestructables();
                     else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana();
                     else if (Input.GetKeyDown(KeyCode.M)) debugInputManager.ToggleMoveSpeed();
@@ -110,7 +111,19 @@ namespace DebugMode
         [HarmonyPatch(typeof(OptionsController), nameof(OptionsController.AddVisibleJoysticks))]
         static class PatchAddVisibleJoysticks { static void Postfix() => debugSettingAdded = false; }
 
+        private static CharacterType setCharacterPreview(string level)
+        {
+            CharacterType characterType = CharacterType.VOID;
+            if (level == "Mad Forest") characterType = CharacterType.PUGNALA;
+            else if (level == "Inlaid Library") characterType = CharacterType.GIOVANNA;
+            else if (level == "Dairy Plant") characterType = CharacterType.POPPEA;
+            else if (level == "Gallo Tower") characterType = CharacterType.CONCETTA;
+            else if (level == "Cappella Magna") characterType = CharacterType.ASSUNTA;
+            else if (level == "Mt.Moonspell") characterType = CharacterType.MIANG;
+            else if (level == "Lake Foscari") characterType = CharacterType.ELEANOR;
 
+            return characterType;
+        }
         private static void UpdateEnabled(bool value)
         {
             ModifyConfigValue(enabledKey, value);
