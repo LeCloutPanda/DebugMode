@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using MelonLoader;
 using HarmonyLib;
-using Il2CppVampireSurvivors.UI;
 using Il2CppVampireSurvivors.Input;
 using Il2CppVampireSurvivors.Framework;
 using Il2CppVampireSurvivors.Objects.Characters;
@@ -11,22 +10,25 @@ using UnityEngine;
 using Il2CppVampireSurvivors.Objects.Weapons;
 using Il2CppVampireSurvivors.Objects;
 using Il2CppCom.LuisPedroFonseca.ProCamera2D;
+using System;
 using Il2CppVampireSurvivors.Data;
 
 namespace DebugMode
 {
     public class ConfigData
     {
-        public bool Enabled { get; set; }
+        public string Name = ModInfo.Name;
+        public bool EnableDebugMode = false;
+        public bool UseShiftKeyForZoom = false;
     }
-
+    
     public static class ModInfo
     {
         public const string Name = "Debug Mode";
         public const string Description = "Unleash the power of debug mode.";
         public const string Author = "LeCloutPanda";
         public const string Company = "Pandas Hell Hole";
-        public const string Version = "1.0.2";
+        public const string Version = "1.0.4";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
 
@@ -35,17 +37,11 @@ namespace DebugMode
         static readonly string configFolder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs");
         static readonly string filePath = Path.Combine(configFolder, "DebugMode.json");
 
-        static readonly string enabledKey = "Enabled";
-        static bool enabled;
-
-        static void UpdateDebug(bool value) => UpdateEnabled(value);
-        static bool debugSettingAdded = false;
-        static System.Action<bool> debugSettingChanged = UpdateDebug;
+        public static ConfigData config = new ConfigData();
 
         static CharacterController characterController;
         static GameDebugInputManager debugInputManager;
         static GameManager gameManager;
-        static OptionsController optionsController;
 
         public override void OnInitializeMelon()
         {
@@ -57,11 +53,20 @@ namespace DebugMode
             ValidateConfig();
         }
 
+        DateTime lastModified;
+
         public override void OnLateUpdate()
         {
             base.OnLateUpdate();
 
-            if (enabled)
+            if (lastModified != File.GetLastWriteTime(filePath))
+            {
+                lastModified = File.GetLastWriteTime(filePath);
+                LoadConfig();
+                MelonLogger.Msg($"[{lastModified.ToString("HH:mm:ss")}] Reloading Config for {ModInfo.Name}");
+            }
+
+            if (config.EnableDebugMode)
             {
                 if (characterController != null && debugInputManager != null && gameManager != null)
                 {
@@ -83,33 +88,11 @@ namespace DebugMode
                     else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana();
                     else if (Input.GetKeyDown(KeyCode.M)) debugInputManager.ToggleMoveSpeed();
 
-                    gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
+                    if (config.UseShiftKeyForZoom && Input.GetKey(KeyCode.LeftShift)) gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
+                    else if (!config.UseShiftKeyForZoom) gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
                 }
             }
         }
-
-        [HarmonyPatch(typeof(CharacterController), nameof(CharacterController.Awake))]
-        static class PatchcharacterControllerAwake { static void Postfix(CharacterController __instance) => characterController = __instance; }
-
-        [HarmonyPatch(typeof(GameDebugInputManager), nameof(GameDebugInputManager.Awake))]
-        static class PatchDebugInputManager { static void Postfix(GameDebugInputManager __instance) => debugInputManager = __instance; }
-
-        [HarmonyPatch(typeof(GameManager), nameof(GameManager.Awake))]
-        static class PatchGameManager { static void Postfix(GameManager __instance) => gameManager = __instance; }
-
-        [HarmonyPatch(typeof(OptionsController), nameof(OptionsController.BuildGameplayPage))]
-        static class PatchBuildGameplayPage
-        {
-            static void Postfix(OptionsController __instance)
-            {
-                optionsController = __instance;
-                if (!debugSettingAdded) optionsController.AddTickBox("Debug Mode", enabled, debugSettingChanged, false);
-                debugSettingAdded = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(OptionsController), nameof(OptionsController.AddVisibleJoysticks))]
-        static class PatchAddVisibleJoysticks { static void Postfix() => debugSettingAdded = false; }
 
         private static CharacterType setCharacterPreview(string level)
         {
@@ -124,11 +107,15 @@ namespace DebugMode
 
             return characterType;
         }
-        private static void UpdateEnabled(bool value)
-        {
-            ModifyConfigValue(enabledKey, value);
-            enabled = value;
-        }
+
+        [HarmonyPatch(typeof(CharacterController), nameof(CharacterController.Awake))]
+        static class PatchcharacterControllerAwake { static void Postfix(CharacterController __instance) => characterController = __instance; }
+
+        [HarmonyPatch(typeof(GameDebugInputManager), nameof(GameDebugInputManager.Awake))]
+        static class PatchDebugInputManager { static void Postfix(GameDebugInputManager __instance) => debugInputManager = __instance; }
+
+        [HarmonyPatch(typeof(GameManager), nameof(GameManager.Awake))]
+        static class PatchGameManager { static void Postfix(GameManager __instance) => gameManager = __instance; }
 
         private static void ValidateConfig()
         {
@@ -139,30 +126,16 @@ namespace DebugMode
 
                 LoadConfig();
             }
-            catch (System.Exception ex) { MelonLogger.Msg($"Error: {ex}"); }
+            catch (System.Exception ex) { MelonLogger.Error($"Error validating Config: {ex}"); }
         }
 
-        private static void ModifyConfigValue<T>(string key, T value)
+        private static void LoadConfig()
         {
-            string file = File.ReadAllText(filePath);
-            JObject json = JObject.Parse(file);
+            JObject json = JObject.Parse(File.ReadAllText(filePath) ?? "{}");
 
-            if (!json.ContainsKey(key)) json.Add(key, JToken.FromObject(value));
-            else
-            {
-                System.Type type = typeof(T);
-                JToken newValue = JToken.FromObject(value);
-
-                if (type == typeof(string)) json[key] = newValue.ToString();
-                else if (type == typeof(int)) json[key] = newValue.ToObject<int>();
-                else if (type == typeof(bool)) json[key] = newValue.ToObject<bool>();
-                else { MelonLogger.Msg($"Unsupported type '{type.FullName}'"); return; }
-            }
-
-            string finalJson = JsonConvert.SerializeObject(json, Formatting.Indented);
-            File.WriteAllText(filePath, finalJson);
+            config.Name = (string)json.GetValue("Name");
+            config.EnableDebugMode = (bool)json.GetValue("EnableDebugMode");
+            config.UseShiftKeyForZoom = (bool)json.GetValue("UseShiftKeyForZoom");
         }
-
-        private static void LoadConfig() => enabled = JObject.Parse(File.ReadAllText(filePath) ?? "{}").Value<bool>(enabledKey);
     }
 }
