@@ -28,6 +28,10 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 * B: Spawn destructibles
 * N: Give the player a Arcana
 * M: Toggle max move speed
+* R: Spawn golden egg
+* Y: Give normal candybox
+* U: Give evolved candybox
+* Q: Trigger gold fever
 * Scroll wheel(with optional Shift modifier in config): Zoom in/out
 
 # Need to report a bug
