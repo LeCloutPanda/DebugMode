@@ -1,20 +1,17 @@
-﻿using System.IO;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using MelonLoader;
-using HarmonyLib;
-using Il2CppVampireSurvivors.Framework;
-using Il2CppVampireSurvivors.Objects.Characters;
-using UnityEngine;
-using Il2CppVampireSurvivors.Objects.Weapons;
-using Il2CppVampireSurvivors.Objects;
+﻿using HarmonyLib;
 using Il2CppCom.LuisPedroFonseca.ProCamera2D;
-using System;
+using Il2CppSystem.Collections.Generic;
 using Il2CppVampireSurvivors.Data;
-using Il2CppVampireSurvivors.Objects.Items;
-using Il2CppVampireSurvivors.Data.Stage;
-using Il2CppVampireSurvivors;
+using Il2CppVampireSurvivors.Framework;
+using Il2CppVampireSurvivors.Objects;
+using Il2CppVampireSurvivors.Objects.Weapons;
 using Il2CppVampireSurvivors.Tools;
+using MelonLoader;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
+using UnityEngine;
 
 namespace DebugMode
 {
@@ -36,6 +33,7 @@ namespace DebugMode
         public const string Version = "1.0.6.0";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
+
     public class DebugModeMod : MelonMod
     {
         static readonly string configFolder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Configs");
@@ -55,6 +53,57 @@ namespace DebugMode
 
             ValidateConfig();
 
+        }
+
+        public List<R> Select<T, R>(List<T> list, Func<T, R> expr)
+        {
+            List<R> ret = new List<R>();
+            foreach (T item in list)
+            {
+                ret.Add(expr(item));
+            }
+            return ret;
+        }
+        public List<T> Where<T>(List<T> list, Func<T, bool> expr)
+        {
+            List<T> ret = new List<T>();
+            foreach (T item in list)
+            {
+                if (expr(item)) ret.Add(item);
+            }
+            return ret;
+        }
+
+        public List<WeaponType> GetEquippedAccessoryTypes() { return Select(gameManager.Player.AccessoriesManager.ActiveEquipment, (e) => e._equipmentType); }
+
+        public List<WeaponType> GetAllAccessoryTypes()
+        {
+            List<WeaponType> Accessories = new List<WeaponType>();
+            foreach (KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray> entry in gameManager.DataManager.AllWeaponData)
+            {
+                // Currently only Accessories have the "isPowerUp" json member, but just to make sure check it's value.
+                if (entry.Value.First.SelectToken("isPowerUp") != null && (bool)entry.Value.First.SelectToken("isPowerUp"))
+                {
+                    Accessories.Add(entry.Key);
+                }
+            }
+            return Accessories;
+        }
+
+        private void GiveAllAccessories()
+        {
+            Action<WeaponType> addAccesory = (type) => gameManager.AccessoriesFacade.AddAccessory(type, gameManager.Player);
+            Where(GetAllAccessoryTypes(), (type) => !GetEquippedAccessoryTypes().Contains(type)).ForEach(addAccesory);
+        }
+
+        private void GiveAllWeapons()
+        {
+            Action<WeaponType> addWeapon = (type) => gameManager.WeaponsFacade.AddWeapon(type, gameManager.Player);
+
+            foreach (WeaponType type in gameManager.WeaponsFacade._weaponFactory._weapons.Keys)
+            {
+                addWeapon(type);
+            }
         }
 
         DateTime lastModified;
@@ -81,6 +130,8 @@ namespace DebugMode
                     else if (Input.GetKeyDown(KeyCode.L)) gameManager.Player.PlayerOptions.AddCoins(1000); // Works
                     else if (Input.GetKeyDown(KeyCode.H)) gameManager.Player.SetHealthToMax(); // Works
                     else if (Input.GetKeyDown(KeyCode.Z)) gameManager.DebugGiveAllWeapons(); // Works
+                    else if (Input.GetKeyDown(KeyCode.C)) GiveAllAccessories();
+                    else if (Input.GetKeyDown(KeyCode.Semicolon)) GiveAllWeapons();
                     else if (Input.GetKeyDown(KeyCode.I)) gameManager.Player.Debug_ToggleInvulnerability(); // Works
                     else if (Input.GetKeyDown(KeyCode.T)) gameManager.Stage.DebugNextMinute(); // Works
                     else if (Input.GetKeyDown(KeyCode.O)) gameManager.Player.Kill(); // Works
@@ -125,7 +176,9 @@ namespace DebugMode
                 "X: Level up\n" +
                 "L: Add 1000 coins\n" +
                 "H: Heal player\n" +
-                "Z: Give all weapons\n" +
+                "Z: Give all equipment\n" +
+                "C: Give all accessories\n" +
+                "Semicolon(;): Give all weapons\n" +
                 "I: Toggle invulnerability\n" +
                 "T: Advance timer forward a minute\n" +
                 "O: Kill player\n" +
