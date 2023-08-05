@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using MelonLoader;
-using DebugMode;
+using DebugMode.src;
 
 [assembly: AssemblyTitle(ModInfo.Description)]
 [assembly: AssemblyDescription(ModInfo.Description)]
@@ -10,6 +10,6 @@ using DebugMode;
 [assembly: AssemblyTrademark(ModInfo.Company)]
 [assembly: AssemblyVersion(ModInfo.Version)]
 [assembly: AssemblyFileVersion(ModInfo.Version)]
-[assembly: MelonInfo(typeof(DebugModeMod), ModInfo.Name, ModInfo.Version, ModInfo.Author, ModInfo.DownloadLink)]
+[assembly: MelonInfo(typeof(DebugMode.src.DebugMode), ModInfo.Name, ModInfo.Version, ModInfo.Author, ModInfo.DownloadLink)]
 
 [assembly: MelonGame("poncle", "VampireSurvivors")]

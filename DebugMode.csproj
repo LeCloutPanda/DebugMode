@@ -1,93 +1,62 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FB7807A2-3FE4-458D-B370-521AFF092D12}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DebugMode</RootNamespace>
-    <AssemblyName>DebugMode</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="DebugModeMod.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\net6\0Harmony.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="0Harmony">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\net6\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppInterop.Runtime">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Dependencies\SupportModules\Il2CppInterop.Runtime.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Dependencies\SupportModules\Il2CppInterop.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Il2Cppmscorlib, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppNewtonsoft.Json">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppNewtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppPauseSystem">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppPauseSystem.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppPauseSystem.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppPhaserPort">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppPhaserPort.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppPhaserPort.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppProCamera2D">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppProCamera2D.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppProCamera2D.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppSystem.Core.dll</HintPath>
     </Reference>
     <Reference Include="Il2CppVampireSurvivors.Runtime">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppVampireSurvivors.Runtime.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\Il2CppVampireSurvivors.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="MelonLoader, Version=0.5.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\net6\MelonLoader.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MelonLoader">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\net6\MelonLoader.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\UnityEngine.IMGUIModule.dll</HintPath>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="VSMenuHelper">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\Mods\VSMenuHelper.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
