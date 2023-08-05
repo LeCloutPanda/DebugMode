@@ -44,8 +44,8 @@ namespace DebugMode.src
             MenuHelper = new();
             DeclareMenuTabs(MenuHelper);
 
-            HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("dev.panda.debugmode");
-            harmony.PatchAll();
+            //HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("dev.panda.debugmode");
+            //harmony.PatchAll();
         }
 
         private void DeclareMenuTabs(MenuHelper MenuHelper)
@@ -106,7 +106,6 @@ namespace DebugMode.src
             Il2CppSystem.Collections.Generic.List<WeaponType> Accessories = new Il2CppSystem.Collections.Generic.List<WeaponType>();
             foreach (Il2CppSystem.Collections.Generic.KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray> entry in gameManager.DataManager.AllWeaponData)
             {
-                // Currently only Accessories have the "isPowerUp" json member, but just to make sure check it's value.
                 if (entry.Value.First.SelectToken("isPowerUp") != null && (bool)entry.Value.First.SelectToken("isPowerUp"))
                 {
                     Accessories.Add(entry.Key);

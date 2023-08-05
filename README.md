@@ -14,7 +14,9 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 * X: Level the player up
 * L: Add 1000 coins(Based on scaling)
 * H: Heal the player
-* Z: Give the player all weapons
+* Z: Give the player everything
+* C: Give the player all accessories
+* Semicolon(;): Give the player all weapons
 * I: Toggle Invulnerability
 * T: Forward the timer by 1 minute
 * O: Kill the player
