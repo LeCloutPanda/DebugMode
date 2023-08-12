@@ -157,13 +157,13 @@ namespace DebugMode.src
                     else if (Input.GetKeyDown(KeyCode.K)) gameManager.RosaryDamage();
                     else if (Input.GetKeyDown(KeyCode.G)) cheatsManager.ForceTreasure(3);
                     else if (Input.GetKeyDown(KeyCode.V)) gameManager.TurnOnVacuum();
-                    else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.stageName) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(setCharacterPreview(gameManager.Stage.ActiveStageData.stageName));
+                    else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.stageName) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(setCharacterPreview(gameManager.Stage.ActiveStageData.stageName), gameManager.Player);
                     else if (Input.GetKeyDown(KeyCode.B)) gameManager.Stage.DebugSpawnDestructibles();
                     else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana();
                     else if (Input.GetKeyDown(KeyCode.M)) MelonLogger.Msg("Not implemented yet: Toggle Move Speed");
                     else if (Input.GetKeyDown(KeyCode.R)) gameManager.MakeStagePickup(gameManager.Player.CurrentPos, ItemType.RELIC_GOLDENEGG);
-                    else if (Input.GetKeyDown(KeyCode.Y)) gameManager.AddWeapon(WeaponType.CANDYBOX);
-                    else if (Input.GetKeyDown(KeyCode.U)) gameManager.AddWeapon(WeaponType.CANDYBOX2);
+                    else if (Input.GetKeyDown(KeyCode.Y)) gameManager.AddWeapon(WeaponType.CANDYBOX, gameManager.Player);
+                    else if (Input.GetKeyDown(KeyCode.U)) gameManager.AddWeapon(WeaponType.CANDYBOX2, gameManager.Player);
                     else if (Input.GetKeyDown(KeyCode.Q)) gameManager.TriggerGoldFever(10000f);
 
                     if (useShiftForZoom.Value && Input.GetKey(KeyCode.LeftShift)) gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
