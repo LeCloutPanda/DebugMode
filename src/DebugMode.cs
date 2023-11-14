@@ -5,11 +5,10 @@ using Il2CppVampireSurvivors.Framework;
 using Il2CppVampireSurvivors.Objects;
 using Il2CppVampireSurvivors.Objects.Weapons;
 using Il2CppVampireSurvivors.Tools;
-using Il2CppVampireSurvivors.UI;
 using MelonLoader;
 using UnityEngine;
-using VSMenuHelper;
-using static Il2CppVampireSurvivors.UI.OptionsController;
+using VSMenuModHelper;
+using static Il2CppSystem.Linq.Expressions.Interpreter.InitializeLocalInstruction;
 
 namespace DebugMode.src
 {
@@ -19,17 +18,16 @@ namespace DebugMode.src
         public const string Description = "Unleash the power of debug mode.";
         public const string Author = "LeCloutPanda";
         public const string Company = "Pandas Hell Hole";
-        public const string Version = "1.0.7.0";
+        public const string Version = "1.0.7.2";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
 
     public class DebugMode : MelonMod
     {
-        private MelonPreferences_Category preferences;
+        private static MelonPreferences_Category preferences; 
         private static MelonPreferences_Entry<bool> enabled;
         private static MelonPreferences_Entry<bool> useShiftForZoom;
         private static MelonPreferences_Entry<bool> useShiftForBinds;
-        private static MenuHelper MenuHelper;
 
         private static GameManager gameManager;
         private static Cheats cheatsManager;
@@ -41,44 +39,33 @@ namespace DebugMode.src
             useShiftForZoom = preferences.CreateEntry("useShiftForZoom", true);
             useShiftForBinds = preferences.CreateEntry("useShiftForBinds", true);
 
-            MenuHelper = new();
-            DeclareMenuTabs(MenuHelper);
 
-            //HarmonyLib.Harmony harmony = new HarmonyLib.Harmony("dev.panda.debugmode");
-            //harmony.PatchAll();
+            //DeclareMenuTabs();
         }
 
-        private void DeclareMenuTabs(MenuHelper MenuHelper)
+        private void DeclareMenuTabs()
         {
-            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "resources", "panda", "debugmode.png");
+            try
+            {
+                Uri iconUrl = new Uri("https://github.com/LeCloutPanda/DebugMode/blob/main/debugmode.png?raw=true");
+                VSMenuHelper.Instance.DeclareOptionsTab("DebugeMode", iconUrl);
 
-            MenuHelper.DeclareTab("Config Tab", imagePath);
+                VSMenuHelper.Instance.AddTabSpriteModifier("DebugeMode", (sprite) => {
+                    sprite.texture.filterMode = UnityEngine.FilterMode.Point;
+                    return sprite;
+                });
 
-            MenuHelper.AddElementToTab("Config Tab", new TickBox("enabled", () => enabled.Value, (value) => enabled.Value = value));
-            MenuHelper.AddElementToTab("Config Tab", new TickBox("useShiftForZoom", () => useShiftForZoom.Value, (value) => useShiftForZoom.Value = value));
-            MenuHelper.AddElementToTab("Config Tab", new TickBox("useShiftForBinds", () => useShiftForBinds.Value, (value) => useShiftForBinds.Value = value));
+                VSMenuHelper.Instance.AddElementToTab("DebugeMode", new Title("Debug Mode"));
+                VSMenuHelper.Instance.AddElementToTab("DebugeMode", new TickBox("enabled", () => enabled.Value, (value) => enabled.Value = value));
+                VSMenuHelper.Instance.AddElementToTab("Debug_Mode", new TickBox("useShiftForZoom", () => useShiftForZoom.Value, (value) => useShiftForZoom.Value = value));
+                VSMenuHelper.Instance.AddElementToTab("Debug_Mode", new TickBox("useShiftForBinds", () => useShiftForBinds.Value, (value) => useShiftForBinds.Value = value));
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Error when creating config panel: " + e);
+            }
+
         }
-
-        [HarmonyPatch(typeof(OptionsController))]
-        class Example_OptionsController_Patch
-        {
-            [HarmonyPatch(nameof(OptionsController.Construct))]
-            [HarmonyPrefix]
-            static void Construct_Prefix() => MenuHelper.Construct_Prefix();
-
-            [HarmonyPatch(nameof(OptionsController.Initialize))]
-            [HarmonyPrefix]
-            static void Initialize_Prefix(OptionsController __instance) => MenuHelper.Initialize_Prefix(__instance);
-
-            [HarmonyPatch(nameof(OptionsController.GetTabSprite))]
-            [HarmonyPostfix]
-            static void GetTabSprite_Postfix(OptionsTabType t, ref Sprite __result) => __result = MenuHelper.OnGetTabSprite(t) ?? __result;
-
-            [HarmonyPatch(nameof(OptionsController.BuildPage))]
-            [HarmonyPrefix]
-            static bool BuildPage_Prefix(OptionsController __instance, OptionsTabType type) => MenuHelper.OnBuildPage(__instance, type);
-        }
-
 
         public Il2CppSystem.Collections.Generic.List<R> Select<T, R>(Il2CppSystem.Collections.Generic.List<T> list, Func<T, R> expr)
         {
@@ -130,8 +117,6 @@ namespace DebugMode.src
             }
         }
 
-        DateTime lastModified;
-
         public override void OnLateUpdate()
         {
             base.OnLateUpdate();
@@ -151,7 +136,7 @@ namespace DebugMode.src
                     else if (Input.GetKeyDown(KeyCode.I)) gameManager.Player.Debug_ToggleInvulnerability();
                     else if (Input.GetKeyDown(KeyCode.T)) gameManager.Stage.DebugNextMinute();
                     else if (Input.GetKeyDown(KeyCode.O)) gameManager.Player.Kill();
-                    else if (Input.GetKeyDown(KeyCode.P)) gameManager.StopTime();
+                    else if (Input.GetKeyDown(KeyCode.P)) gameManager.StopTimeForMilliseconds(10000);
                     else if (Input.GetKeyDown(KeyCode.E)) gameManager.Stage.DebugSpawnMaxEnemies();
                     else if (Input.GetKeyDown(KeyCode.F)) foreach (Equipment item in gameManager.Player.WeaponsManager.ActiveEquipment) { item.TryCast<Weapon>().Fire(); }
                     else if (Input.GetKeyDown(KeyCode.K)) gameManager.RosaryDamage();
@@ -160,8 +145,8 @@ namespace DebugMode.src
                     else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.stageName) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(setCharacterPreview(gameManager.Stage.ActiveStageData.stageName), gameManager.Player);
                     else if (Input.GetKeyDown(KeyCode.B)) gameManager.Stage.DebugSpawnDestructibles();
                     else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana();
-                    else if (Input.GetKeyDown(KeyCode.M)) MelonLogger.Msg("Not implemented yet: Toggle Move Speed");
-                    else if (Input.GetKeyDown(KeyCode.R)) gameManager.MakeStagePickup(gameManager.Player.CurrentPos, ItemType.RELIC_GOLDENEGG);
+                    //else if (Input.GetKeyDown(KeyCode.M)) MelonLogger.Msg("Not implemented yet: Toggle Move Speed");
+                    //else if (Input.GetKeyDown(KeyCode.R)) gameManager.MakeStagePickup(gameManager.Player.CurrentPos, ItemType.RELIC_GOLDENEGG);
                     else if (Input.GetKeyDown(KeyCode.Y)) gameManager.AddWeapon(WeaponType.CANDYBOX, gameManager.Player);
                     else if (Input.GetKeyDown(KeyCode.U)) gameManager.AddWeapon(WeaponType.CANDYBOX2, gameManager.Player);
                     else if (Input.GetKeyDown(KeyCode.Q)) gameManager.TriggerGoldFever(10000f);

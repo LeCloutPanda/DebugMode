@@ -54,8 +54,8 @@
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\MelonLoader\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="VSMenuHelper">
-      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\Mods\VSMenuHelper.dll</HintPath>
+    <Reference Include="VSMenuModHelper">
+      <HintPath>D:\Games\SteamLibrary\steamapps\common\Vampire Survivors\Mods\VSMenuModHelper.dll</HintPath>
     </Reference>
   </ItemGroup>
 
