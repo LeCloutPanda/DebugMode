@@ -36,6 +36,9 @@ A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire
 * Q: Trigger gold fever
 * Scroll wheel(with optional Shift modifier in config): Zoom in/out
 
+# Usage for v1.0.7-a
+As I have changed how I handle configs I now use [VSMenuModHelper](https://github.com/nwfistere/VSMenuModHelper/releases/tag/v1.0.0) so download this and place it into your mods folder and download [DebugMode.png]([https://github.com/LeCloutPanda/VampireRPC/releases/download/v1.0.2-a/vampirerpc.png](https://github.com/LeCloutPanda/DebugMode/releases/download/v1.0.7-a/debugmode.png)) and place it into **Vampire Survivors\resources\panda**
+
 # Need to report a bug
 Please report them in the [Issues](https://github.com/LeCloutPanda/DebugMode/issues) section following this [Example Issue](https://github.com/LeCloutPanda/DebugMode/issues/1) as a template
 
