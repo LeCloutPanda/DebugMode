@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Il2CppCom.LuisPedroFonseca.ProCamera2D;
+using Il2CppSystem.Collections.Generic;
 using Il2CppVampireSurvivors.Data;
 using Il2CppVampireSurvivors.Framework;
 using Il2CppVampireSurvivors.Objects;
@@ -75,6 +76,15 @@ namespace DebugMode.src
             return Accessories;
         }
 
+        public static Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray>> GetAllWeaponData()
+        {
+            Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray>> weaponList = new Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray>>();
+            foreach (Il2CppSystem.Collections.Generic.KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray> entry in gameManager.DataManager.AllWeaponData)
+            {
+                weaponList.Add(entry);
+            }
+            return weaponList;
+        }
         private void GiveAllAccessories()
         {
             Action<WeaponType> addAccesory = (type) => gameManager.AccessoriesFacade.AddAccessory(type, gameManager.Player);
@@ -95,15 +105,9 @@ namespace DebugMode.src
         {
             base.OnLateUpdate();
 
-
             if (Input.GetKeyDown(KeyCode.M))
             {
-                var keys = gameManager.WeaponsFacade._weaponFactory._weapons.Keys;
-                var keyData = gameManager.WeaponsFacade._weaponFactory._weapons.keyData;
-
-                Debug.Log(keys);
-                Debug.Log(keyData);
-
+                Task.WaitAll(WriteWeaponListToJsonAsync(GetAllWeaponData()));
             }
 
             if (enabled.Value)
@@ -157,7 +161,37 @@ namespace DebugMode.src
         }
 
         [HarmonyPatch(typeof(GameManager), nameof(GameManager.Awake))]
-        static class PatchGameManager { static void Postfix(GameManager __instance) => gameManager = __instance; }
+        static class PatchGameManager { static void Postfix(GameManager __instance) {
+                gameManager = __instance;
+            } 
+        }
+
+        public async Task WriteWeaponListToJsonAsync(Il2CppSystem.Collections.Generic.List<Il2CppSystem.Collections.Generic.KeyValuePair<WeaponType, Il2CppNewtonsoft.Json.Linq.JArray>> weaponList)
+        {
+            // Get the directory of the executable
+            string exeDirectory = Application.dataPath;
+
+            // Create the full path to the "weapons.json" file
+            string filePath = Path.Combine(exeDirectory, "weapons.json");
+
+            // Create a dictionary to hold the data
+            Il2CppSystem.Collections.Generic.Dictionary<string, Il2CppNewtonsoft.Json.Linq.JArray> dataDict = new Il2CppSystem.Collections.Generic.Dictionary<string, Il2CppNewtonsoft.Json.Linq.JArray>();
+
+            // Convert the list to a dictionary
+            foreach (var weapon in weaponList)
+            {
+                dataDict.Add(weapon.Key.ToString(), weapon.Value);
+            }
+
+            // Convert the dictionary to a JSON string
+            string jsonString = Il2CppNewtonsoft.Json.JsonConvert.SerializeObject(dataDict, Il2CppNewtonsoft.Json.Formatting.Indented);
+
+            // Write the JSON string to the "weapons.json" file asynchronously
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                await writer.WriteAsync(jsonString);
+            }
+        }
 
         [HarmonyPatch(typeof(Cheats), nameof(Cheats.Construct))]
         static class PatchCheats { static void Postfix(Cheats __instance) => cheatsManager = __instance; }
