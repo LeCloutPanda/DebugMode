@@ -7,8 +7,7 @@ using Il2CppVampireSurvivors.Objects.Weapons;
 using Il2CppVampireSurvivors.Tools;
 using MelonLoader;
 using UnityEngine;
-using VSMenuModHelper;
-using static Il2CppSystem.Linq.Expressions.Interpreter.InitializeLocalInstruction;
+using static Il2CppVampireSurvivors.Framework.WeaponFactory;
 
 namespace DebugMode.src
 {
@@ -18,7 +17,7 @@ namespace DebugMode.src
         public const string Description = "Unleash the power of debug mode.";
         public const string Author = "LeCloutPanda";
         public const string Company = "Pandas Hell Hole";
-        public const string Version = "1.0.7.2";
+        public const string Version = "1.0.7.3";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
 
@@ -39,31 +38,6 @@ namespace DebugMode.src
             useShiftForZoom = preferences.CreateEntry("useShiftForZoom", true);
             useShiftForBinds = preferences.CreateEntry("useShiftForBinds", true);
 
-
-            //DeclareMenuTabs();
-        }
-
-        private void DeclareMenuTabs()
-        {
-            try
-            {
-                Uri iconUrl = new Uri("https://github.com/LeCloutPanda/DebugMode/blob/main/debugmode.png?raw=true");
-                VSMenuHelper.Instance.DeclareOptionsTab("DebugeMode", iconUrl);
-
-                VSMenuHelper.Instance.AddTabSpriteModifier("DebugeMode", (sprite) => {
-                    sprite.texture.filterMode = UnityEngine.FilterMode.Point;
-                    return sprite;
-                });
-
-                VSMenuHelper.Instance.AddElementToTab("DebugeMode", new Title("Debug Mode"));
-                VSMenuHelper.Instance.AddElementToTab("DebugeMode", new TickBox("enabled", () => enabled.Value, (value) => enabled.Value = value));
-                VSMenuHelper.Instance.AddElementToTab("Debug_Mode", new TickBox("useShiftForZoom", () => useShiftForZoom.Value, (value) => useShiftForZoom.Value = value));
-                VSMenuHelper.Instance.AddElementToTab("Debug_Mode", new TickBox("useShiftForBinds", () => useShiftForBinds.Value, (value) => useShiftForBinds.Value = value));
-            }
-            catch (Exception e)
-            {
-                Debug.Log("Error when creating config panel: " + e);
-            }
 
         }
 
@@ -120,6 +94,17 @@ namespace DebugMode.src
         public override void OnLateUpdate()
         {
             base.OnLateUpdate();
+
+
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                var keys = gameManager.WeaponsFacade._weaponFactory._weapons.Keys;
+                var keyData = gameManager.WeaponsFacade._weaponFactory._weapons.keyData;
+
+                Debug.Log(keys);
+                Debug.Log(keyData);
+
+            }
 
             if (enabled.Value)
             {
