@@ -2,9 +2,9 @@
 A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire_Survivors/) that uses [Melon Loader](https://github.com/LavaGang/MelonLoader) to load the mod
 
 # Installation
-1) Download and install [Melon Loader v0.61](https://github.com/LavaGang/MelonLoader/releases/tag/v0.6.1) for Vampire Survivors after it updates with the new engine
+1) Download and install the latest [Melon Loader](https://github.com/HerpDerpinstine/MelonLoader/releases/latest/download/MelonLoader.Installer.exe) for Vampire Survivors.
 2) Run the game at least once, it may freeze or appear to be frozen give it time to do its thing as it is doing stuff in the background 
-3) Once it's done close the game and download the latest release of [DebugMode](https://github.com/LeCloutPanda/DebugMode/releases/download/v1.0.6-a/DebugMode.dll) and place it into the **Mods** folder
+3) Once it's done close the game and download the latest release of [DebugMode](https://github.com/LeCloutPanda/DebugMode/releases/latest/download/DebugMode.dll) and place it into the **Mods** folder
 
 # Usage
 By default to trigger the buttons you need to hold left shift but this can be change in the Melon config for the mod.
