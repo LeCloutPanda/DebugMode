@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using Il2CppCom.LuisPedroFonseca.ProCamera2D;
-using Il2CppSystem.Collections.Generic;
 using Il2CppVampireSurvivors.Data;
 using Il2CppVampireSurvivors.Framework;
 using Il2CppVampireSurvivors.Objects;
@@ -8,7 +7,6 @@ using Il2CppVampireSurvivors.Objects.Weapons;
 using Il2CppVampireSurvivors.Tools;
 using MelonLoader;
 using UnityEngine;
-using static Il2CppVampireSurvivors.Framework.WeaponFactory;
 
 namespace DebugMode.src
 {
@@ -18,7 +16,7 @@ namespace DebugMode.src
         public const string Description = "Unleash the power of debug mode.";
         public const string Author = "LeCloutPanda";
         public const string Company = "Pandas Hell Hole";
-        public const string Version = "1.0.7.3";
+        public const string Version = "1.0.8";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
 
@@ -116,29 +114,30 @@ namespace DebugMode.src
                 {
                     if (useShiftForBinds.Value) if (!Input.GetKey(KeyCode.LeftShift)) return;
 
-                    if (Input.GetKeyDown(KeyCode.X)) cheatsManager.ForceLevelUp();
+                    if (Input.GetKeyDown(KeyCode.X)) cheatsManager.ForceLevelUp(); // Works
                     else if (Input.GetKeyDown(KeyCode.L)) gameManager.Player.PlayerOptions.AddCoins(1000);
-                    else if (Input.GetKeyDown(KeyCode.H)) gameManager.Player.SetHealthToMax();
+                    else if (Input.GetKeyDown(KeyCode.H)) gameManager.Player.SetHealthToMax(); // Works
                     else if (Input.GetKeyDown(KeyCode.Z)) gameManager.DebugGiveAllWeapons();
                     else if (Input.GetKeyDown(KeyCode.C)) GiveAllAccessories();
                     else if (Input.GetKeyDown(KeyCode.Semicolon)) GiveAllWeapons();
-                    else if (Input.GetKeyDown(KeyCode.I)) gameManager.Player.Debug_ToggleInvulnerability();
-                    else if (Input.GetKeyDown(KeyCode.T)) gameManager.Stage.DebugNextMinute();
-                    else if (Input.GetKeyDown(KeyCode.O)) gameManager.Player.Kill();
-                    else if (Input.GetKeyDown(KeyCode.P)) gameManager.StopTimeForMilliseconds(10000);
-                    else if (Input.GetKeyDown(KeyCode.E)) gameManager.Stage.DebugSpawnMaxEnemies();
+                    else if (Input.GetKeyDown(KeyCode.I)) gameManager.Player.Debug_ToggleInvulnerability(); // Works
+                    else if (Input.GetKeyDown(KeyCode.T)) gameManager.Stage.DebugNextMinute(); 
+                    else if (Input.GetKeyDown(KeyCode.O)) gameManager.Player.Kill(); // Works
+                    else if (Input.GetKeyDown(KeyCode.P)) gameManager.StopTimeForMilliseconds(10000); // Works
+                    else if (Input.GetKeyDown(KeyCode.E)) gameManager.Stage.DebugSpawnMaxEnemies(); // Works
                     else if (Input.GetKeyDown(KeyCode.F)) foreach (Equipment item in gameManager.Player.WeaponsManager.ActiveEquipment) { item.TryCast<Weapon>().Fire(); }
-                    else if (Input.GetKeyDown(KeyCode.K)) gameManager.RosaryDamage();
-                    else if (Input.GetKeyDown(KeyCode.G)) cheatsManager.ForceTreasure(3);
-                    else if (Input.GetKeyDown(KeyCode.V)) gameManager.TurnOnVacuum();
+                    else if (Input.GetKeyDown(KeyCode.K)) gameManager.RosaryDamage(); // Works
+                    else if (Input.GetKeyDown(KeyCode.G)) cheatsManager.ForceTreasure(3); // Works
+                    else if (Input.GetKeyDown(KeyCode.V)) gameManager.TurnOnVacuum(); // Works
                     else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.stageName) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(setCharacterPreview(gameManager.Stage.ActiveStageData.stageName), gameManager.Player);
-                    else if (Input.GetKeyDown(KeyCode.B)) gameManager.Stage.DebugSpawnDestructibles();
-                    else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana();
+                    else if (Input.GetKeyDown(KeyCode.B)) gameManager.Stage.DebugSpawnDestructibles(); // Works
+                    else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana(); // Works
                     //else if (Input.GetKeyDown(KeyCode.M)) MelonLogger.Msg("Not implemented yet: Toggle Move Speed");
                     //else if (Input.GetKeyDown(KeyCode.R)) gameManager.MakeStagePickup(gameManager.Player.CurrentPos, ItemType.RELIC_GOLDENEGG);
-                    else if (Input.GetKeyDown(KeyCode.Y)) gameManager.AddWeapon(WeaponType.CANDYBOX, gameManager.Player);
-                    else if (Input.GetKeyDown(KeyCode.U)) gameManager.AddWeapon(WeaponType.CANDYBOX2, gameManager.Player);
-                    else if (Input.GetKeyDown(KeyCode.Q)) gameManager.TriggerGoldFever(10000f);
+                    else if (Input.GetKeyDown(KeyCode.Y)) gameManager.AddWeapon(WeaponType.CANDYBOX, gameManager.Player); // Works
+                    else if (Input.GetKeyDown(KeyCode.U)) gameManager.AddWeapon(WeaponType.CANDYBOX2, gameManager.Player); // Works
+                    else if (Input.GetKeyDown(KeyCode.Q)) gameManager.TriggerGoldFever(10000f); // Works
+
 
                     if (useShiftForZoom.Value && Input.GetKey(KeyCode.LeftShift)) gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
                     else if (!useShiftForZoom.Value) gameManager.ZoomCamera(-Input.mouseScrollDelta.y, 0, EaseType.Linear);
