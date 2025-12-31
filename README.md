@@ -2,7 +2,7 @@
 A mod for [Vampire survivors](https://store.steampowered.com/app/1794680/Vampire_Survivors/) that uses [Melon Loader](https://github.com/LavaGang/MelonLoader) to load the mod
 
 # Installation
-1) Download and install the latest [Melon Loader](https://github.com/HerpDerpinstine/MelonLoader/releases/latest/download/MelonLoader.Installer.exe) for Vampire Survivors.
+1) Download and install the latest [Melon Loader](https://github.com/LavaGang/MelonLoader/releases/latest/download/MelonLoader.Installer.exe) for Vampire Survivors.
 2) Run the game at least once, it may freeze or appear to be frozen give it time to do its thing as it is doing stuff in the background 
 3) Once it's done close the game and download the latest release of [DebugMode](https://github.com/LeCloutPanda/DebugMode/releases/latest/download/DebugMode.dll) and place it into the **Mods** folder
 
@@ -15,7 +15,7 @@ By default to trigger the buttons you need to hold left shift but this can be ch
 * C: Give the player all accessories
 * Semicolon(;): Give the player all weapons
 * I: Toggle Invulnerability
-* T: Forward the timer by 1 minute
+* T: Forward the timer by 1 minute  
 * O: Kill the player
 * P: Trigger a time stop
 * E: Spawn max enemies

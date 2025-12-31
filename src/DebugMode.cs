@@ -16,7 +16,7 @@ namespace DebugMode.src
         public const string Description = "Unleash the power of debug mode.";
         public const string Author = "LeCloutPanda";
         public const string Company = "Pandas Hell Hole";
-        public const string Version = "1.0.8";
+        public const string Version = "1.1.0";
         public const string DownloadLink = "https://github.com/LeCloutPanda/DebugMode";
     }
 
@@ -30,14 +30,12 @@ namespace DebugMode.src
         private static GameManager gameManager;
         private static Cheats cheatsManager;
 
-        public override void OnInitializeMelon()
+        public override void OnLateInitializeMelon()
         {
             preferences = MelonPreferences.CreateCategory("debugmode_preferences");
             enabled = preferences.CreateEntry("enabled", true);
             useShiftForZoom = preferences.CreateEntry("useShiftForZoom", true);
             useShiftForBinds = preferences.CreateEntry("useShiftForBinds", true);
-
-
         }
 
         public Il2CppSystem.Collections.Generic.List<R> Select<T, R>(Il2CppSystem.Collections.Generic.List<T> list, Func<T, R> expr)
@@ -49,6 +47,7 @@ namespace DebugMode.src
             }
             return ret;
         }
+
         public Il2CppSystem.Collections.Generic.List<T> Where<T>(Il2CppSystem.Collections.Generic.List<T> list, Func<T, bool> expr)
         {
             Il2CppSystem.Collections.Generic.List<T> ret = new Il2CppSystem.Collections.Generic.List<T>();
@@ -129,11 +128,11 @@ namespace DebugMode.src
                     else if (Input.GetKeyDown(KeyCode.K)) gameManager.RosaryDamage(); // Works
                     else if (Input.GetKeyDown(KeyCode.G)) cheatsManager.ForceTreasure(3); // Works
                     else if (Input.GetKeyDown(KeyCode.V)) gameManager.TurnOnVacuum(); // Works
-                    else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.stageName) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(setCharacterPreview(gameManager.Stage.ActiveStageData.stageName), gameManager.Player);
+                    else if (Input.GetKeyDown(KeyCode.J) && setCharacterPreview(gameManager.Stage.ActiveStageData.) != CharacterType.VOID) gameManager.AddCharacterTypeToQueue(, gameManager.Player); // Fycked
                     else if (Input.GetKeyDown(KeyCode.B)) gameManager.Stage.DebugSpawnDestructibles(); // Works
-                    else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana(); // Works
+                    else if (Input.GetKeyDown(KeyCode.N)) gameManager.OpenMainArcana(gameManager.PlayerOne, null);
                     //else if (Input.GetKeyDown(KeyCode.M)) MelonLogger.Msg("Not implemented yet: Toggle Move Speed");
-                    //else if (Input.GetKeyDown(KeyCode.R)) gameManager.MakeStagePickup(gameManager.Player.CurrentPos, ItemType.RELIC_GOLDENEGG);
+                    else if (Input.GetKeyDown(KeyCode.R)) gameManager.MakeStagePickup(gameManager.Player.CurrentPos, ItemType.RELIC_GOLDENEGG);
                     else if (Input.GetKeyDown(KeyCode.Y)) gameManager.AddWeapon(WeaponType.CANDYBOX, gameManager.Player); // Works
                     else if (Input.GetKeyDown(KeyCode.U)) gameManager.AddWeapon(WeaponType.CANDYBOX2, gameManager.Player); // Works
                     else if (Input.GetKeyDown(KeyCode.Q)) gameManager.TriggerGoldFever(10000f); // Works
